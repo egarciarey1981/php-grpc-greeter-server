@@ -1,0 +1,11 @@
+services:
+  grpc-service:
+    build: .
+    ports:
+      - "9001:9001"
+    working_dir: /code
+    command: ["rr", "serve"]
+    volumes:
+      - .:/code
+    environment:
+      - RR_LOG_LEVEL=debug

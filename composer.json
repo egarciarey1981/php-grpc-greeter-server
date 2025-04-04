@@ -1,0 +1,16 @@
+{
+    "require": {
+        "grpc/grpc": "*",
+        "spiral/roadrunner-cli": "*",
+        "spiral/roadrunner-grpc": "*",
+        "spiral/roadrunner-http": "*",
+        "spiral/roadrunner": "^2024.3",
+        "nyholm/psr7": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "GRPC\\": "generated/GRPC"
+        }
+    }
+}
