@@ -2,31 +2,18 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use App\Infrastructure\Service\Grpc\GrpcGreeterService;
+use GRPC\Greeter\GreeterInterface;
+use Spiral\RoadRunner\GRPC\Invoker;
+use Spiral\RoadRunner\GRPC\Server;
 use Spiral\RoadRunner\Worker;
-use Spiral\RoadRunner\Http\PSR7Worker;
 
-$worker = Worker::create();
-$factory = new Psr17Factory();
+$server = new Server(new Invoker(), [
+    'debug' => false, // optional (default: false)
+]);
 
-$psr7 = new PSR7Worker($worker, $factory, $factory, $factory);
+# Register the services
+$server->registerService(GreeterInterface::class, new GrpcGreeterService());
 
-while (true) {
-    try {
-        $request = $psr7->waitRequest();
-        if ($request === null) {
-            break;
-        }
-    } catch (\Throwable $e) {
-        $psr7->respond(new Response(400));
-        continue;
-    }
-
-    try {
-        $psr7->respond(new Response(200, [], 'Hello RoadRunner!'));
-    } catch (\Throwable $e) {
-        $psr7->respond(new Response(500, [], 'Something Went Wrong!'));
-        $psr7->getWorker()->error((string)$e);
-    }
-}
+# Start the server
+$server->serve(Worker::create());

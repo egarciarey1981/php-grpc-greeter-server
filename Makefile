@@ -2,10 +2,10 @@ PWD=$(shell pwd)
 UID=$(shell id -u)
 GID=$(shell id -g)
 
-up:
+up: composer-install
 	docker compose up
 
-up-build:
+build-up: composer-install
 	docker compose up --build
 
 down:
@@ -18,4 +18,6 @@ protoc-generate:
 	docker compose exec -u $(UID):$(GID) -w /code grpc-service protoc \
 		--php_out=./generated \
 		--php-grpc_out=./generated \
+		--proto_path=./proto \
+		--plugin=protoc-gen-grpc=/usr/bin/protoc-gen-php-grpc \
 		$(shell find proto -name "*.proto")
